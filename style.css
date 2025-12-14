@@ -213,6 +213,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     margin: 15px 0;
 }
 
+.course-item {
+    display: flex;
+    flex-direction: column;
+}
+
 .course-card {
     background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
     border-radius: 14px;
@@ -328,8 +333,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
 
 .course-links {
     display: flex;
+    /* changed to vertical stacking so discount goes under the info button */
+    flex-direction: column;
     justify-content: center;
-    gap: 6px;
+    align-items: stretch; /* make children able to expand to full width */
+    gap: 8px;
 }
 
 .course-link {
@@ -340,17 +348,34 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     text-decoration: none;
     white-space: nowrap;
     z-index: 3; /* ensure buttons are clickable above overlay */
+    display: inline-block;
+    text-align: center;
+    box-sizing: border-box;
 }
 
     .course-link.info {
         background: #3390ec;
         color: white !important;
+        /* keep info button compact and centered */
+        width: auto;
+        align-self: center;
+        white-space: nowrap;
     }
 
     .course-link.discount {
         background: #FF5722;
         color: white !important;
+        /* make discount button span the full width of the card */
+        width: 100%;
+        display: block;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-weight: 700;
     }
+
+.course-discount {
+    margin-top: 8px;
+}
 
 /* КОНТАКТЫ */
 .contact-list {
