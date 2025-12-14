@@ -1,4 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    // Apply UTM tag to all links and data-href before other initialization
+    addUtmToAllLinks('utm_source=pp_tma');
+
     // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM
     initializeTelegramWebApp();
 
@@ -292,4 +295,36 @@ function sendToBot(action, data = {}) {
         return true;
     }
     return false;
+}
+
+// Add UTM helper functions and apply them early
+function appendUtmToUrl(url, utmParam) {
+    if (!url) return url;
+    // skip anchors, mailto, javascript
+    if (/^(#|mailto:|javascript:)/i.test(url)) return url;
+    // skip if already has utm_source
+    if (/utm_source=/i.test(url)) return url;
+
+    var sep = url.indexOf('?') !== -1 ? '&' : '?';
+    return url + sep + utmParam;
+}
+
+function addUtmToAllLinks(utmParam) {
+    try {
+        var anchors = document.querySelectorAll('a[href]');
+        anchors.forEach(function (a) {
+            var href = a.getAttribute('href');
+            var newHref = appendUtmToUrl(href, utmParam);
+            if (newHref !== href) a.setAttribute('href', newHref);
+        });
+
+        var dataHrefEls = document.querySelectorAll('[data-href]');
+        dataHrefEls.forEach(function (el) {
+            var dh = el.getAttribute('data-href');
+            var newDh = appendUtmToUrl(dh, utmParam);
+            if (newDh !== dh) el.setAttribute('data-href', newDh);
+        });
+    } catch (e) {
+        console.warn('UTM: failed to append UTM to links', e);
+    }
 }
