@@ -5,6 +5,9 @@
     // 1. ИНИЦИАЛИЗАЦИЯ TELEGRAM
     initializeTelegramWebApp();
 
+    // 1.1 Скрыть alert, если пользователь уже закрыл его в этой сессии
+    restoreStepikAlertState();
+
     // 2. НАСТРОЙКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
     setupTabSwitching();
 
@@ -23,6 +26,23 @@
     // 6. ОТЛАДКА
     logDebugInfo();
 });
+
+/**
+ * Скрыть alert в текущем представлении (не сохраняем состояние между перезагрузками)
+ */
+function restoreStepikAlertState() {
+    var alertEl = document.getElementById('stepik-alert');
+    var closeBtn = document.getElementById('stepik-alert-close');
+    if (!alertEl || !closeBtn) return;
+
+    // Ensure alert is visible on load
+    alertEl.classList.remove('hidden');
+
+    closeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        alertEl.classList.add('hidden');
+    });
+}
 
 /**
  * Инициализация Telegram WebApp

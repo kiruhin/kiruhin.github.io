@@ -28,6 +28,62 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     padding: 0 8px;
 }
 
+/* ALERT внутри #courses */
+.stepik-alert {
+    width: calc(100% + 16px); /* full width inside container accounting for padding */
+    margin-left: -8px; /* negate container padding */
+    background: linear-gradient(90deg, #fff3cd, #fff8e1);
+    border: 1px solid #ffe08a;
+    color: #6b4f00;
+    padding: 12px 44px 12px 12px; /* space for close button on the right */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.stepik-alert-text {
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+
+.stepik-alert-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #6b4f00;
+    font-size: 18px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 140ms ease, transform 120ms ease;
+}
+
+.stepik-alert-close:hover,
+.stepik-alert-close:focus {
+    background: rgba(0,0,0,0.04);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+/* Hide alert when .hidden */
+.stepik-alert.hidden {
+    display: none !important;
+}
+
 /* ВКЛАДКИ */
 .tabs {
     display: flex;
@@ -375,7 +431,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     line-height: 1;
     align-items: center; /* ensure vertical centering inside these flex containers */
     padding: 6px 8px; /* uniform padding */
-}
+    }
 
 .course-rating .fa-star {
     color: #FFC107;
@@ -537,7 +593,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     height: 100%;
     object-fit: contain;
     display: block;
-    padding: 4px; /* inner padding so image doesn't touch rounded corners */
+    /*padding: 4px;*/ /* inner padding so image doesn't touch rounded corners */
 }
 
 /* Platform-specific backgrounds for the icon square */
