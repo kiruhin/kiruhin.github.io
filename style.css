@@ -316,7 +316,8 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     display: flex;
     justify-content: center;
     gap: 12px; /* increased space between action buttons for better touch targets */
-    margin-top: auto; /* <-- key: push links (and the rating above them) to the card bottom */
+    margin-top: auto; /* push action area to the bottom of the flex column so rating + links align across cards */
+    margin-bottom: 10px; /* small bottom spacing inside the card */
 }
 
 .course-rating {
@@ -429,12 +430,6 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
 
 /* ...остальные стили без изменений... */
 
-.course-links {
-    display: flex;
-    justify-content: center;
-    gap: 12px; /* increased space between action buttons for better touch targets */
-    margin: 10px;
-}
 
 .course-link {
     /* Slightly larger, more tappable buttons with smooth hover/leave animations */
