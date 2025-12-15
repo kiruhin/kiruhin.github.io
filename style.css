@@ -211,6 +211,9 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     margin: 15px 0;
+    /* ensure each grid row's cells can grow to equal height so cards in the same row align */
+    grid-auto-rows: 1fr;
+    align-items: stretch; /* stretch children to fill the row height */
 }
 
 .course-card {
@@ -230,6 +233,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     justify-content: flex-start; /* default - top aligned */
     align-items: center;         /* center horizontally */
     min-height: 140px;          /* ensure consistent card height */
+    height: 100%; /* fill grid cell height so cards in a row are same height */
 }
 
 /* Center content vertically for upcoming teaser cards */
@@ -307,6 +311,14 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     color: #0b1a2b !important;
 }
 
+/* push the action area to the bottom of the flex column so rating + links align across cards */
+.course-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* increased space between action buttons for better touch targets */
+    margin-top: auto; /* <-- key: push links (and the rating above them) to the card bottom */
+}
+
 .course-rating {
     display: inline-flex;
     align-items: center;
@@ -317,14 +329,106 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     border-radius: 999px;
     font-weight: 700;
     font-size: 12px;
-    margin: 0 auto 10px;
+    margin: 0 0 10px; /* remove horizontal auto so flex alignment works */
     box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+/* Ensure both rating and enrollment align vertically */
+.course-meta > * {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure icons render consistently and are vertically centered */
+.course-meta i,
+.course-rating i,
+.course-enrollment i {
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+    font-size: 12px; /* same as surrounding text */
+}
+
+/* Some FA glyphs have slightly different visual centers across platforms.
+   Nudge the star down by a small amount so it visually aligns with the users icon. */
+.course-rating .fa-star {
+    transform: translateY(0.08em);
+    display: inline-block; /* ensure transform applies consistently */
+}
+
+/* Ensure users icon uses no vertical nudge */
+.course-enrollment .fa-users {
+    transform: translateY(0);
+    display: inline-block;
+}
+
+/* Keep containers vertically centered */
+.course-meta > * {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.course-rating,
+.course-enrollment {
+    line-height: 1;
+    align-items: center; /* ensure vertical centering inside these flex containers */
+    padding: 6px 8px; /* uniform padding */
 }
 
 .course-rating .fa-star {
     color: #FFC107;
+}
+
+/* New meta container to hold rating and enrollment side-by-side */
+.course-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* center both items as a group */
+    gap: 8px;
+    margin: 0 0 10px; /* only bottom margin */
+    /* do not force full width so contents stay together */
+}
+
+.course-enrollment {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(51, 144, 236, 0.08); /* match rating background */
+    color: #1a73e8; /* match rating color */
+    padding: 6px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+.course-enrollment .fa-users {
+    color: #1a73e8; /* make icon same color as text */
+}
+
+/* Курс - иконка пользователя вместо звезды */
+.course-rating-alternative {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(51, 144, 236, 0.08);
+    color: #1a73e8;
+    padding: 6px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    margin: 0 auto 10px;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+.course-rating-alternative .fa-users {
+    color: #1a73e8;
     font-size: 12px;
 }
+
+/* ...остальные стили без изменений... */
 
 .course-links {
     display: flex;
@@ -393,7 +497,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     margin: 15px 0;
 }
 
-/* 5px colored border for each contact button and centered text */
+/* 5px colored border for each contact button and centered текст */
 .contact-item {
     display: flex;
     align-items: center;
@@ -521,4 +625,47 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, .tab, .logo-title, .logo-subtit
     content: '\f017'; /* Иконка часов */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
+}
+
+/* Strong override: ensure perfect vertical centering inside .course-meta */
+.course-meta {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.course-meta .course-rating,
+.course-meta .course-enrollment {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 22px !important; /* fixed control height */
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+}
+
+.course-meta .course-rating i,
+.course-meta .course-enrollment i {
+    display: block !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+/* Pixel nudge for star to match users glyph center */
+.course-meta .course-rating .fa-star {
+    transform: translateY(1px) !important;
+}
+
+.course-meta .course-enrollment .fa-users {
+    transform: translateY(0) !important;
+}
+
+/* Improve font smoothing for icons */
+.course-meta i {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
