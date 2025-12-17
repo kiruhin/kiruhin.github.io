@@ -31,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // 2. НАСТРОЙКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК
     setupTabSwitching();
 
+    // Enable swipe navigation between tabs
+    setupSwipeNavigation();
+
     // 3. НАСТРОЙКА СПЕЦИАЛЬНЫХ КНОПОК
     setupSpecialButtons();
 
@@ -493,6 +496,30 @@ function switchToTab(tabId) {
 }
 
 /**
+ * Switch to adjacent tab: 'next' or 'prev'. Respects tab order in DOM.
+ */
+function switchToAdjacentTab(direction) {
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    if (!tabs || tabs.length === 0) return;
+
+    const active = document.querySelector('.tab.active');
+    let idx = active ? tabs.indexOf(active) : 0;
+    if (idx === -1) idx = 0;
+
+    let newIdx = idx;
+    if (direction === 'next') newIdx = Math.min(tabs.length - 1, idx + 1);
+    if (direction === 'prev') newIdx = Math.max(0, idx - 1);
+
+    if (newIdx === idx) return; // nothing to do
+
+    const targetTab = tabs[newIdx];
+    if (targetTab) {
+        targetTab.click(); // reuse existing click handler which calls switchToTab
+        try { triggerHapticFeedback('selection'); } catch (e) { /* ignore */ }
+    }
+}
+
+/**
  * Пометить карточки как бесплатные если в области .course-links есть ссылка с текстом "Записаться"
  */
 function markFreeCourses() {
@@ -507,5 +534,102 @@ function markFreeCourses() {
         });
     } catch (e) {
         console.warn('markFreeCourses failed', e);
+    }
+}
+
+/**
+ * Setup swipe / pointer navigation between the main tabs (home, courses, contacts).
+ * Supports pointer events (mouse/touch/pen) and falls back to touch events for older browsers.
+ */
+function setupSwipeNavigation() {
+    const container = document.querySelector('.container') || document.body;
+    if (!container) return;
+
+    let startX = 0;
+    let startY = 0;
+    let isPointer = false;
+    let pointerActive = false;
+
+    const HORIZONTAL_THRESHOLD = 50; // px
+    const VERTICAL_CANCEL = 60; // px vertical movement cancels a horizontal swipe
+
+    function onSwipeDelta(dx, dy) {
+        if (Math.abs(dx) < HORIZONTAL_THRESHOLD) return;
+        if (Math.abs(dy) > VERTICAL_CANCEL) return; // likely a scroll
+
+        if (dx < 0) {
+            // swipe left -> next tab
+            switchToAdjacentTab('next');
+        } else {
+            // swipe right -> previous tab
+            switchToAdjacentTab('prev');
+        }
+    }
+
+    // Pointer events (preferred)
+    function onPointerDown(e) {
+        if (typeof e.pointerType === 'string') isPointer = true;
+        pointerActive = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+
+    function onPointerMove(e) {
+        if (!pointerActive) return;
+        // do nothing, we evaluate on up
+    }
+
+    function onPointerUp(e) {
+        if (!pointerActive) return;
+        pointerActive = false;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        onSwipeDelta(dx, dy);
+    }
+
+    // Touch fallback
+    function onTouchStart(e) {
+        const t = e.touches[0];
+        if (!t) return;
+        startX = t.clientX;
+        startY = t.clientY;
+    }
+
+    function onTouchEnd(e) {
+        // changedTouches may be empty on touchend; use last touch from changedTouches
+        const t = (e.changedTouches && e.changedTouches[0]) || null;
+        if (!t) return;
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        onSwipeDelta(dx, dy);
+    }
+
+    // Mouse fallback (drag)
+    let mouseDown = false;
+    function onMouseDown(e) {
+        mouseDown = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+    function onMouseUp(e) {
+        if (!mouseDown) return;
+        mouseDown = false;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        onSwipeDelta(dx, dy);
+    }
+
+    // Attach preferred event listeners
+    if (window.PointerEvent) {
+        container.addEventListener('pointerdown', onPointerDown, { passive: true });
+        container.addEventListener('pointerup', onPointerUp, { passive: true });
+        container.addEventListener('pointercancel', () => { pointerActive = false; }, { passive: true });
+    } else {
+        // Touch events
+        container.addEventListener('touchstart', onTouchStart, { passive: true });
+        container.addEventListener('touchend', onTouchEnd, { passive: true });
+        // Mouse
+        container.addEventListener('mousedown', onMouseDown, { passive: true });
+        container.addEventListener('mouseup', onMouseUp, { passive: true });
     }
 }
